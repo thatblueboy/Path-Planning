@@ -22,7 +22,7 @@ class PRM:
         return x, y
 
     def drawNode(self, x, y, flag):                  # flag is given to identify start and end and draw them differently
-        if flag==0:
+        if flag == 0:
             node = Circle((x, y), 1, color = 'r')
         else:
             node = Circle((x, y), 0.5, color = 'g')
@@ -153,17 +153,18 @@ class dijkstra: #operating as A*
     def addToDoneList(self, a):
         self.done.append(a)
 
-    def nextNode(self):
+    def nextNode(self, c): #Use for Astar
         pathLen = self.pathLen.copy()
         done = self.done.copy()
         all = self.all.copy()
         left = list(set(all) - set(done))
         a = left.pop(0)
-        min = pathLen[a]
+        min = pathLen[a] + self.dist(a, c)
         while left != []:
             b = left.pop(0)
-            if pathLen[b] < min:
+            if pathLen[b] + self.dist(b, c) < min:
                 a = b
+                min = pathLen[a] + self.dist(a,c)
         return a
 
     def drawLine(self, a, b):
@@ -266,7 +267,7 @@ paths = ourPRM.make_list_of_paths()
 
 dstra = dijkstra(numOfNodes, listOfNodes, paths)
 
-dstra.pathLen[0] = dstra.dist(0, n-1) #remove to revert to dijkstra
+# dstra.pathLen[0] = dstra.dist(0, n-1) #remove to revert to dijkstra
 
 a = 0
 while a != n-1 :
@@ -276,10 +277,10 @@ while a != n-1 :
         c = b.pop(0)
         dist = dstra.dist(a, c) + dstra.pathLen[a] 
         if dist < dstra.pathLen[c]:
-            dstra.pathLen[c] = dist + dstra.dist(c, n-1)  #remove dstra.dist to revert to dijsktra
+            dstra.pathLen[c] = dist
             dstra.viaNode[c] = a
     dstra.addToDoneList(a)
-    a = dstra.nextNode()
+    a = dstra.nextNode(n-1)
 
 a = n-1
 while True:
